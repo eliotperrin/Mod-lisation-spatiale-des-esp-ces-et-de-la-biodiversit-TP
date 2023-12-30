@@ -1,5 +1,5 @@
 setwd("/Users/eliotperrin/Desktop/Uni/Biogéosciences/Etude de cas modélisation")
-set.seed(123)
+set.seed(209)
 # Visualisation des datas
 occ<-read.table('/Users/eliotperrin/Desktop/Uni/Biogéosciences/Etude de cas modélisation/Botrychium_lunaria.txt')
 head(occ)
@@ -112,10 +112,11 @@ names(env.stack.RCP45)<-var
 names(env.stack.RCP85)<-var
 
 pred_RCP45<-predict(env.stack.RCP45,RF, type="prob", index=2)
-plot(pred_RCP45)
+plot(pred_RCP45,main = "RF RCP45")
 writeRaster(pred_RCP45,"prediction_RCP45.tif", overwrite=T)
 
 pred_RCP85<-predict(env.stack.RCP85,RF, type="prob", index=2)
+plot(pred_RCP85,main = "RF RCP85")
 writeRaster(pred_RCP85,"prediction_RCP85.tif", overwrite=T)
 
 boxplot(c(pred,pred_RCP45,pred_RCP85),names=c("présent","RCP 4.5","RCP 8.5"))
@@ -127,9 +128,23 @@ writeRaster(diff_RCP45,"diff_RCP45.tif",overwrite=T)
 prev<-sum(occ$resp)/length(occ$resp)
 pred_bin <- pred>prev
 pred_RCP45_bin <- pred_RCP45>prev
-plot(pred_RCP45_bin)
+plot(pred_RCP45_bin, main = "RCP45 Binary predictions")
 
 change.RCP45<- pred_RCP45_bin - 2*pred_bin
-plot(change.RCP45)
+plot(change.RCP45, main = "Changes RCP45")
 
 writeRaster(change.RCP45,"chg_RCP45.tif",overwrite=T)
+
+diff_RCP85 <- pred_RCP85-pred
+
+writeRaster(diff_RCP85,"diff_RCP85.tif",overwrite=T)
+
+prev<-sum(occ$resp)/length(occ$resp)
+pred_bin <- pred>prev
+pred_RCP85_bin <- pred_RCP85>prev
+plot(pred_RCP85_bin, main = "RCP85 Binary predictions")
+
+change.RCP85<- pred_RCP85_bin - 2*pred_bin
+plot(change.RCP85, main = "Changes RCP85")
+
+writeRaster(change.RCP85,"chg_RCP85.tif",overwrite=T)
